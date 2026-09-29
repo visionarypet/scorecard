@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dog Quality of Life Score | Visionary Pet Foods</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gold:#C9A84C;
+  --gold-light:#F5E6C0;
+  --dark:#1C1410;
+  --warm:#3D2E1E;
+  --cream:#FDFAF5;
+  --text:#2C2018;
+  --muted:#7A6A58;
+  --border:#E8DDD0;
+}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);margin:0;padding:0;}
+.page{max-width:680px;margin:0 auto;padding:0 0 60px;}
+.hero{background:var(--dark);padding:48px 40px 40px;text-align:center;}
+.hero-eyebrow{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.18em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;}
+.hero-title{font-family:'Playfair Display',serif;font-size:32px;color:#fff;line-height:1.3;margin-bottom:12px;}
+.hero-title em{color:var(--gold);font-style:italic;}
+.hero-sub{font-size:14px;color:#B5A898;line-height:1.7;max-width:460px;margin:0 auto 24px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:40px;padding:8px 18px;font-size:12px;color:var(--gold);}
+.progress-bar-wrap{background:var(--warm);padding:16px 40px;}
+.progress-track{height:3px;background:rgba(255,255,255,0.1);border-radius:2px;margin-bottom:8px;}
+.progress-fill{height:3px;background:var(--gold);border-radius:2px;transition:width 0.4s ease;width:0%;}
+.progress-label{font-size:11px;color:#B5A898;display:flex;justify-content:space-between;}
+.categories{padding:32px 40px 0;}
+.cat-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px 28px;margin-bottom:16px;transition:border-color 0.2s;}
+.cat-card.active{border-color:var(--gold);}
+.cat-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;}
+.cat-num{width:32px;height:32px;border-radius:50%;background:var(--gold-light);color:var(--warm);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Inter',sans-serif;}
+.cat-num.scored{background:var(--gold);color:#fff;}
+.cat-info{flex:1;}
+.cat-name{font-family:'Playfair Display',serif;font-size:18px;color:var(--dark);margin-bottom:4px;}
+.cat-question{font-size:13px;color:var(--muted);line-height:1.6;}
+.cat-score-display{font-size:24px;font-weight:600;color:var(--gold);font-family:'Playfair Display',serif;min-width:40px;text-align:right;}
+.slider-wrap{padding:0 4px;}
+.score-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:8px;}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid #fff;}
+.score-hints{display:flex;justify-content:space-between;font-size:11px;margin-top:8px;}
+.hint-bad{color:#C0392B;}
+.hint-good{color:#27AE60;}
+.cat-guidance{background:var(--cream);border-radius:8px;padding:12px 16px;margin-top:16px;font-size:12px;color:var(--muted);line-height:1.6;border-left:2px solid var(--gold);}
+.submit-wrap{padding:32px 40px 0;text-align:center;}
+.submit-btn{background:var(--gold);color:var(--dark);border:none;border-radius:6px;padding:16px 48px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.04em;transition:opacity 0.2s;}
+.submit-btn:hover{opacity:0.9;}
+.submit-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.submit-note{font-size:12px;color:var(--muted);margin-top:10px;}
+.results{display:none;padding:40px;}
+.results-header{text-align:center;margin-bottom:40px;}
+.results-eyebrow{font-size:11px;letter-spacing:0.16em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;}
+.results-score{font-family:'Playfair Display',serif;font-size:72px;color:var(--dark);line-height:1;margin-bottom:4px;}
+.results-denom{font-size:18px;color:var(--muted);}
+.results-status{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:8px;margin-top:16px;}
+.results-desc{font-size:14px;color:var(--muted);line-height:1.7;max-width:460px;margin:0 auto;}
+.breakdown{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px 28px;margin-bottom:24px;}
+.breakdown-title{font-size:12px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;}
+.breakdown-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.breakdown-row:last-child{margin-bottom:0;}
+.breakdown-cat{font-size:13px;font-weight:500;width:140px;flex-shrink:0;}
+.breakdown-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.breakdown-bar-fill{height:100%;border-radius:3px;}
+.breakdown-score{font-size:13px;font-weight:600;width:24px;text-align:right;}
+.next-steps{background:var(--dark);border-radius:12px;padding:28px;margin-bottom:24px;}
+.next-title{font-family:'Playfair Display',serif;font-size:18px;color:#fff;margin-bottom:16px;}
+.next-item{display:flex;gap:12px;margin-bottom:12px;font-size:13px;color:#C8B89A;line-height:1.6;}
+.next-arrow{color:var(--gold);flex-shrink:0;margin-top:1px;}
+.cta-section{text-align:center;padding:8px 0;}
+.cta-primary{display:inline-block;background:var(--gold);color:var(--dark);border-radius:6px;padding:14px 36px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:12px;font-family:'Inter',sans-serif;}
+.cta-secondary{display:block;font-size:13px;color:var(--muted);text-decoration:underline;cursor:pointer;background:none;border:none;margin:8px auto 0;}
+.vpf-footer{text-align:center;padding:24px 40px 0;border-top:1px solid var(--border);margin-top:8px;}
+.vpf-footer-logo{font-size:11px;letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;}
+.vpf-footer-sub{font-size:11px;color:#B5A898;margin-top:4px;}
+@media(max-width:500px){
+  .hero{padding:36px 24px 32px;}
+  .categories{padding:24px 16px 0;}
+  .cat-card{padding:20px 20px;}
+  .submit-wrap{padding:24px 16px 0;}
+  .results{padding:24px 16px;}
+  .progress-bar-wrap{padding:16px 24px;}
+  .breakdown-cat{width:100px;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Visionary Pet Foods · Canine Wellness</div>
+    <div class="hero-title">Does your dog have a good<br/><em>quality of life?</em></div>
+    <div class="hero-sub">Score your dog across 7 key categories in under 3 minutes. Based on Dr. Alice Villalobos' Quality of Life Scale — used by vets and pet parents worldwide.</div>
+    <div class="hero-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#C9A84C" stroke-width="1.2"/><path d="M7 4v3.5l2 1" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Takes about 3 minutes · Free · No signup required
+    </div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label">
+      <span id="progressText">Score each category below</span>
+      <span id="progressCount">0 of 7 scored</span>
+    </div>
+  </div>
+
+  <div class="categories" id="categoriesSection">
+
+    <div class="cat-card" id="card0">
+      <div class="cat-header">
+        <div class="cat-num" id="num0">1</div>
+        <div class="cat-info">
+          <div class="cat-name">Hurt</div>
+          <div class="cat-question">Is your dog's pain well managed? Watch for limping, restlessness, reluctance to move, or panting at night.</div>
+        </div>
+        <div class="cat-score-display" id="disp0">—</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="score-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="updateScore(0,this.value)" id="slider0"/>
+        <div class="score-hints"><span class="hint-bad">Pain poorly managed</span><span class="hint-good">Comfortable all day</span></div>
+      </div>
+      <div class="cat-guidance">Score 8–10: Comfortable most of the day. Score 4–7: Occasional discomfort. Score 0–3: Pain appears persistent or poorly controlled.</div>
+    </div>
+
+    <div class="cat-card" id="card1">
+      <div class="cat-header">
+        <div class="cat-num" id="num1">2</div>
+        <div class="cat-info">
+          <div class="cat-name">Hunger</div>
+          <div class="cat-question">Is your dog eating well and interested in food? Does your dog approach their bowl with enthusiasm?</div>
+        </div>
+        <div class="cat-score-display" id="disp1">—</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="score-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="updateScore(1,this.value)" id="slider1"/>
+        <div class="score-hints"><span class="hint-bad">Not eating</span><span class="hint-good">Eats with enthusiasm</span></div>
+      </div>
+      <div class="cat-guidance">Reduced appetite is often one of the first signs of decline. If appetite changes, tell your vet. Warming food or hand feeding can sometimes help.</div>
+    </div>
+
+    <div class="cat-card" id="card2">
+      <div class="cat-header">
+        <div class="cat-num" id="num2">3</div>
+        <div class="cat-info">
+          <div class="cat-name">Hydration</div>
+          <div class="cat-question">Is your dog adequately hydrated? Try the skin tent test — gently pinch the skin at the back of the neck and release.</div>
+        </div>
+        <div class="cat-score-display" id="disp2">—</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="score-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="updateScore(2,this.value)" id="slider2"/>
+        <div class="score-hints"><span class="hint-bad">Clearly dehydrated</span><span class="hint-good">Well hydrated</span></div>
+      </div>
+      <div class="cat-guidance">Gum check: press your finger on your dog's gums and release. Colour should return within two seconds. Pale or sticky gums warrant a vet call.</div>
+    </div>
+
+    <div class="cat-card" id="card3">
+      <div class="cat-header">
+        <div class="cat-num" id="num3">4</div>
+        <div class="cat-info">
+          <div class="cat-name">Hygiene</div>
+          <div class="cat-question">Is your dog clean and comfortable? Check coat condition, skin, eyes, ears and dental health.</div>
+        </div>
+        <div class="cat-score-display" id="disp3">—</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="score-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="updateScore(3,this.value)" id="slider3"/>
+        <div class="score-hints"><span class="hint-bad">Poor hygiene/comfort</span><span class="hint-good">Clean and comfortable</span></div>
+      </div>
+      <div class="cat-guidance">Dogs who are struggling often stop grooming themselves. Mats, skin issues, ear odours and dental discomfort all affect daily quality of life.</div>
+    </div>
+
+    <div class="cat-card" id="card4">
+      <div class="cat-header">
+        <div class="cat-num" id="num4">5</div>
+        <div class="cat-info">
+          <div class="cat-name">Happiness</div>
+          <div class="cat-question">Does your dog express joy and interest in the world? Do they seek connection, sniff on walks, respond to their name?</div>
+        </div>
+        <div class="cat-score-display" id="disp4">—</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="score-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="updateScore(4,this.value)" id="slider4"/>
+        <div class="score-hints"><span class="hint-bad">Withdrawn, disengaged</span><span class="hint-good">Joyful and engaged</span></div>
+      </div>
+      <div class="cat-guidance">Joy doesn't have to look the same as it did at age 3. Any continued spark of curiosity or connection, however small, is worth acknowledging.</div>
+    </div>
+
+    <div class="cat-card" id="card5">
+      <div class="cat-header">
+        <div class="cat-num" id="num5">6</div>
+        <div class="cat-info">
+          <div class="cat-name">Mobility</div>
+          <div class="cat-question">Can your dog move comfortably and get up without distress? Consider both willingness and physical ability to move.</div>
+        </div>
+        <div class="cat-score-display" id="disp5">—</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="score-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="updateScore(5,this.value)" id="slider5"/>
+        <div class="score-hints"><span class="hint-bad">Cannot move freely</span><span class="hint-good">Moves with ease</span></div>
+      </div>
+      <div class="cat-guidance">Mobility affects almost every aspect of a dog's life. Ask your vet about pain relief, joint support and the right amount of gentle movement.</div>
+    </div>
+
+    <div class="cat-card" id="card6">
+      <div class="cat-header">
+        <div class="cat-num" id="num6">7</div>
+        <div class="cat-info">
+          <div class="cat-name">More good days than bad</div>
+          <div class="cat-question">Step back from the daily details. Over the past week, has your dog had more comfortable, positive days — or more difficult ones?</div>
+        </div>
+        <div class="cat-score-display" id="disp6">—</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="score-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="updateScore(6,this.value)" id="slider6"/>
+        <div class="score-hints"><span class="hint-bad">Mostly difficult days</span><span class="hint-good">Mostly good days</span></div>
+      </div>
+      <div class="cat-guidance">This question carries real weight. Step back and assess the overall picture — not just today. This one question can cut through a lot of complexity.</div>
+    </div>
+
+  </div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" id="submitBtn" onclick="showResults()" disabled>See my dog's score →</button>
+    <div class="submit-note" id="submitNote">Move all 7 sliders to enable your results</div>
+  </div>
+
+  <div class="results" id="resultsSection">
+    <div class="results-header">
+      <div class="results-eyebrow">Your dog's quality of life score</div>
+      <div class="results-score" id="resultsScore">0</div>
+      <div class="results-denom">out of 70</div>
+      <canvas id="dialCanvas" width="200" height="110" style="display:block;margin:20px auto;"></canvas>
+      <div class="results-status" id="resultsStatus"></div>
+      <div class="results-desc" id="resultsDesc"></div>
+      <div class="results-desc" style="font-size:12px;margin-top:12px;">This score is a guide to share with your veterinarian, not a diagnosis.</div>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-title">Score breakdown</div>
+      <div id="breakdownRows"></div>
+    </div>
+
+    <div class="next-steps" id="nextSteps"></div>
+
+    <div class="cta-section">
+      <button class="cta-primary" style="border:none;cursor:pointer;" onclick="resetScorecard()">Score again</button>
+      <a class="cta-secondary" id="nutritionLink" style="display:none;" href="https://www.visionarypet.com">Learn about Visionary Pet Foods</a>
+    </div>
+  </div>
+
+  <div class="vpf-footer">
+    <div class="vpf-footer-logo">Visionary Pet Foods</div>
+    <div class="vpf-footer-sub">Based on the HHHHHMM Quality of Life Scale by Dr. Alice Villalobos, DVM, founder of Pawspice · <a href="https://www.pawspice.com" style="color:inherit;">pawspice.com</a></div>
+  </div>
+
+</div>
+
+<script>
+const cats=['Hurt','Hunger','Hydration','Hygiene','Happiness','Mobility','More good days than bad'];
+const scores=[null,null,null,null,null,null,null];
+const scored=[false,false,false,false,false,false,false];
+
+function updateScore(idx,val){
+  scores[idx]=parseInt(val);
+  scored[idx]=true;
+  document.getElementById('disp'+idx).textContent=val;
+  document.getElementById('num'+idx).classList.add('scored');
+  document.getElementById('card'+idx).classList.add('active');
+  const count=scored.filter(Boolean).length;
+  document.getElementById('progressFill').style.width=(count/7*100)+'%';
+  document.getElementById('progressCount').textContent=count+' of 7 scored';
+  if(count===7){
+    document.getElementById('submitBtn').disabled=false;
+    document.getElementById('submitNote').textContent='All categories scored — ready to see your results!';
+    document.getElementById('progressText').textContent='All done — see your results below';
+  }
+}
+
+function getColor(s){
+  if(s>=8)return'#27AE60';
+  if(s>=5)return'#F39C12';
+  return'#C0392B';
+}
+
+function showResults(){
+  const total=scores.reduce((a,b)=>a+b,0);
+  document.getElementById('categoriesSection').style.display='none';
+  document.querySelector('.submit-wrap').style.display='none';
+  document.getElementById('resultsSection').style.display='block';
+  document.getElementById('resultsScore').textContent=total;
+
+  let status,desc,color,nextHTML;
+  if(total>=50){
+    status='Thriving';color='#27AE60';
+    desc='Your dog is doing well — their quality of life is strong across most categories. Celebrate that. Establish this as your baseline and score monthly to catch any early changes.';
+    nextHTML=`<div class="next-title">What to do next</div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Score your dog once a month to track trends over time</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Bring these results to your next vet appointment as a wellness baseline</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Focus on maintaining the categories where you scored highest</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Keep doing what's working: good food, gentle exercise and regular check-ups</span></div>`;
+  } else if(total>=35){
+    status='Acceptable';color='#F39C12';
+    desc="Life is manageable for your dog, but there's real opportunity to improve their experience. Focus on the lowest-scoring categories first — small improvements there have the biggest impact.";
+    nextHTML=`<div class="next-title">What to do next</div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Identify your two lowest-scoring categories and focus there first</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Book a vet appointment and share these results — bring the scorecard</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Ask your vet whether a change in diet might help in your dog's lowest-scoring areas</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Re-score in 30 days to track whether things are improving</span></div>`;
+  } else if(total>=20){
+    status='Concerning';color='#E67E22';
+    desc="Your dog's quality of life needs attention. Several categories are showing signs of struggle. This score warrants a veterinary conversation soon.";
+    nextHTML=`<div class="next-title">What to do next</div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Schedule a vet appointment soon and bring this scorecard with your results</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Review pain management if Hurt scored below 5 — medication may need adjusting</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Ask your vet about appetite, comfort and hydration support — small changes can make daily life easier</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Ask a family member who spends time with your dog to score independently</span></div>`;
+  } else {
+    status='Please seek urgent care';color='#C0392B';
+    desc="Your dog's score suggests they may be experiencing significant distress. Please contact your veterinarian as soon as possible. You are not alone in this.";
+    nextHTML=`<div class="next-title">What to do next</div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Contact your veterinarian today — share these scores when you call</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>If your vet is unavailable, seek an emergency animal clinic</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>Dr. Villalobos' Quality of Life Scale was designed for exactly this moment — to guide compassionate decisions</span></div>
+      <div class="next-item"><span class="next-arrow">→</span><span>You are doing the right thing by paying attention. Your dog is lucky to have you.</span></div>`;
+  }
+
+  document.getElementById('resultsStatus').textContent=status;
+  document.getElementById('resultsStatus').style.color=color;
+  document.getElementById('resultsDesc').textContent=desc;
+  document.getElementById('nextSteps').innerHTML=nextHTML;
+  document.getElementById('nutritionLink').style.display=(total>=35)?'block':'none';
+
+  const rows=cats.map((cat,i)=>{
+    const s=scores[i];
+    const c=getColor(s);
+    const pct=Math.round(s/10*100);
+    return`<div class="breakdown-row">
+      <div class="breakdown-cat">${cat}</div>
+      <div class="breakdown-bar-track"><div class="breakdown-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+      <div class="breakdown-score" style="color:${c}">${s}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('breakdownRows').innerHTML=rows;
+
+  const canvas=document.getElementById('dialCanvas');
+  const ctx=canvas.getContext('2d');
+  const cx=100,cy=100,r=80;
+  ctx.clearRect(0,0,200,110);
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0,false);
+  ctx.lineWidth=14;ctx.strokeStyle='#E8DDD0';ctx.stroke();
+  const pct70=total/70;
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,Math.PI+pct70*Math.PI,false);
+  ctx.strokeStyle=color;ctx.stroke();
+  ctx.fillStyle=color;
+  ctx.font='500 28px Inter,sans-serif';ctx.textAlign='center';
+  ctx.fillText(total,cx,cy+4);
+  ctx.fillStyle='#7A6A58';ctx.font='12px Inter,sans-serif';
+  ctx.fillText('/ 70',cx,cy+22);
+}
+
+function resetScorecard(){
+  scores.fill(null);scored.fill(false);
+  for(let i=0;i<7;i++){
+    document.getElementById('disp'+i).textContent='—';
+    document.getElementById('num'+i).classList.remove('scored');
+    document.getElementById('card'+i).classList.remove('active');
+    document.getElementById('slider'+i).value=5;
+  }
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('progressCount').textContent='0 of 7 scored';
+  document.getElementById('progressText').textContent='Score each category below';
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('submitNote').textContent='Move all 7 sliders to enable your results';
+  document.getElementById('categoriesSection').style.display='block';
+  document.querySelector('.submit-wrap').style.display='block';
+  document.getElementById('resultsSection').style.display='none';
+}
+</script>
+</body>
+</html>
